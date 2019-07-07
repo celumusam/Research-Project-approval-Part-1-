@@ -10,6 +10,8 @@ from application.models.base_model import Base
 from application.models import base_model, user, level, reward
 from application.models.jobs_applied import JobsApplied
 from application.models.weekly_stats import WeeklyStats
+from application.models.user import UserReward
+>>>>>>> origin
 
 class Storage:
     """
@@ -103,7 +105,6 @@ class Storage:
     
     def get_associated(self, table, foreign_key, foreign_id):
         """Queries the table for values that match foreign id
-
         Args:
             table (str): table to query
             foreign_key (str): name of foreign key in table to find
@@ -124,24 +125,3 @@ class Storage:
         returns count of all objects
         """
         return (len(self.all(cls)))
-
-    def duplicateUserReward(self, user_id, reward_id):
-        """
-        checks for a duplicate of the user reward
-        """
-        for duplicate in self.__session.query(user.UserReward).\
-            filter(user.UserReward.user_id == user_id).\
-            filter(user.UserReward.reward_id == reward_id):
-            return True
-        return False
-
-    def userRewards(self, user_id):
-        """
-        returns a list of associated user rewards
-        """
-        #TODO talk to chris about deleting this method and using get_associated instead
-        user_rewards = []
-        for rewards in self.__session.query(user.UserReward).\
-            filter(user.UserReward.user_id == user_id):
-            user_rewards.append(self.get('Reward', rewards.reward_id).to_json())
-        return user_rewards
