@@ -9,6 +9,7 @@ from sqlalchemy.orm import sessionmaker, scoped_session
 from application.models.base_model import Base
 from application.models import base_model, user, level, reward
 from application.models.jobs_applied import JobsApplied
+from application.models.weekly_stats import WeeklyStats
 
 class Storage:
     """
@@ -100,18 +101,20 @@ class Storage:
             return all_obj.get(obj_str)
         return None
     
-    def get_associated(self, primary_cls, foreign_key, foreign_id):
-        """Queries the database for cls that are associated with the foreign key.
+    def get_associated(self, table, foreign_key, foreign_id):
+        """Queries the table for values that match foreign id
+
         Args:
-            primary_cls: string with name of table to query
-            foreign_key: string of the foreign_key name
-            foreign_id: id (string) of the foreign key to find in the primary table.
-        Return: List of dictionaries containing matches. Each dictionary represents
-        a matched object in the database.
+            table (str): table to query
+            foreign_key (str): name of foreign key in table to find
+            foreign_id (str): value of foreign key to find in table table.
+
+        Returns: 
+            List[Objects]: Each matched object from query
         """
         results = []
-        query_filter = "{}.{} == '{}'".format(primary_cls, foreign_key, foreign_id)
-        for result in self.__session.query(eval(primary_cls)).\
+        query_filter = "{}.{} == '{}'".format(table, foreign_key, foreign_id)
+        for result in self.__session.query(eval(table)).\
             filter(eval(query_filter)):
             results.append(result)
         return results

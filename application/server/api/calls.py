@@ -118,13 +118,12 @@ def jobs_applied():
 
     # GET: Return all jobs that user has applied to
     if request.method == 'GET':
-        results = database.userAppliedJobs(session['id']) 
+        results = database.get_associated('JobsApplied', 'user_id', session['id'])
         return jsonify(results), 200
 
     if request.is_json is False:
         return jsonify(error="Not a valid JSON"), 400
 
-#    jobs = json.loads(user.jobs_applied)
     data = request.get_json()
     if request.method != 'POST':
         job_id = data.get('id')
@@ -150,7 +149,8 @@ def jobs_applied():
 
         # POST: Creates a new entry
         elif request.method == 'POST':
-            user.jobs_applied.append(JobsApplied(**data))
+            # TODO create a method within user class to add jobs
+            user.create_jobs_applied(**data)
             token = 30
             user.currency += token
 

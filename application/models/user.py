@@ -7,6 +7,8 @@ import os
 from application.models.base_model import BaseModel, Base
 from application import models
 from application.models.jobs_applied import JobsApplied
+from application.models.weekly_stats import WeeklyStats, generate_week_range
+from datetime import datetime
 from sqlalchemy.orm import relationship, backref
 from sqlalchemy import Column, Integer, String, Float, ForeignKey,\
     MetaData, Table, JSON
@@ -70,7 +72,8 @@ class User(BaseModel, Base):
     name = Column(String(128), nullable=False)
     email = Column(String(254), nullable=True)
     currency = Column(Integer, default=0)
-    jobs_applied = relationship("JobsApplied")
+    jobs_applied = relationship('JobsApplied')
+    weekly_stats = relationship('WeeklyStats', back_populates='users')
     jobs_interested = Column(JSON, nullable=False)
     level_id = Column(String(60), ForeignKey('levels.id'))
     rewards = relationship('Reward', secondary='user_reward', viewonly=False)
@@ -136,3 +139,36 @@ class User(BaseModel, Base):
                          'notes': job.notes,
                          })
         return jobs
+
+    def create_jobs_applied(self, **kwargs):
+        """Adds a job that a user has applied to the User and JobsApplied class
+
+        Args:
+            Keyword arguments containing the job descriptions
+
+        Returns:
+            None
+        """
+        # Create the job
+        user = models.database.get('User', self.id)
+        user.jobs_applied.append(JobsApplied(**kwargs))
+        user.save()
+
+        # Associate it to a weekly range in WeeklyStats
+        date_applied = datetime.strptime(kwargs['date_applied'], '%Y-%m-%d')
+        start, end = generate_week_range(date_applied)
+        existing_weeks = models.database.get_associated('WeeklyStats',
+                                                        'user_id', self.id)
+        found = False
+
+        # TODO: Make this portion more efficient by implementing
+        # A binary search if objects are returned in chronological order
+        for week in existing_weeks:
+            if week.start_date == start:
+                found = True
+                week.num_applications += 1
+
+        if not found:
+            week = WeeklyStats(user_id=self.id, start_date=start,
+                              end_date=end, num_applications = 1)
+        week.save()
