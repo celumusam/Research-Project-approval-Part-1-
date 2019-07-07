@@ -11,7 +11,6 @@ from application.models import base_model, user, level, reward
 from application.models.jobs_applied import JobsApplied
 from application.models.weekly_stats import WeeklyStats
 from application.models.user import UserReward
->>>>>>> origin
 
 class Storage:
     """
