@@ -62,7 +62,7 @@ export default function AccountPage(props) {
 
   const submitEmail = () => {
     const user_id = getCookie('user_id');
-    const url = getUrl('/api/user/' + user_id + 'email');
+    const url = getUrl('/api/user/' + user_id + '/email');
     
     if (checkEmail(account.email)) {
       $.ajax({
@@ -82,7 +82,7 @@ export default function AccountPage(props) {
       setEmailError(true);  
     }
   }
-
+  /* TODO: Move change email part to another component. Make this component a class */
   return (
     <div className={classes.root}>
       <List aria-label="Account Settings" style={{ width: '100%' }}>
@@ -100,16 +100,6 @@ export default function AccountPage(props) {
                 <Typography variant="h6" gutterBottom>
                   Your email
                 </Typography>
-                {/* Warning! The following is a quick fix for the following problem:
-                  When the user refreshes the page, account.email will not show on the page even if
-                  user has a valid email. My theory is that it comes from async behavior -> the account hooks
-                  is updating before the call to /user is finished and data can be passed to prop.
-                  Therefore, to fix this behavior, I added three loops for the different conditions that may
-                  ensue to guarantee that the user's email will show even when the user refreshes the page.
-                  This is not the best fix! 
-                  This falls under one of the anti-patterns of react (using a prop to initialize state that will
-                  change
-                 */}
                 { account.email !== '' &&
                   <Typography variant="body1" gutterBottom>
                     { account.email }

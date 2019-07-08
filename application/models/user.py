@@ -158,6 +158,7 @@ class User(BaseModel, Base):
             if week.start_date == start:
                 found = True
                 week.num_applications += 1
+                break
 
         if not found:
             week = WeeklyStats(user_id=self.id, start_date=start,
@@ -179,16 +180,20 @@ class User(BaseModel, Base):
         results = {}
         weeks = models.database.get_associated('WeeklyStats', 'user_id', self.id)
         start, end = generate_week_range(date)
-        print(start, end)
         num_applications = [ week.num_applications for week in weeks ]
-        results['avg_applications'] = sum(num_applications) / len(num_applications)
         
         found = False
         results['this_week'] = 0
+        first_start = start
         for week in weeks:
             if week.start_date.date() == start:
                 found = True
                 results['this_week'] += week.num_applications
+            if week.start_date.date() < first_start:
+                first_start = week.start_date.date()
+        num_weeks = (end - first_start).days // 7
+        results['avg_applications'] = sum(num_applications) // num_weeks
+        results['num_weeks'] = num_weeks
         return results
 
     def get_jobs_interviewed_stats(self, date):
