@@ -88,7 +88,6 @@ class User(BaseModel, Base):
         instantiates user object
         """
         if 'name' not in kwargs or not kwargs['name']:
-            print('successfully entered')
             kwargs['name'] = kwargs['user_name']
         super().__init__(*args, **kwargs)
         self.jobs_interested = json.dumps({})
@@ -110,13 +109,6 @@ class User(BaseModel, Base):
                 """ to fit csv formatting notes not included """
             csv_applied += i.get('notes') + '\n'
         return csv_applied
-
-    def get_average_app(self):
-        """
-        Returns a number corresponding to the average number of applications
-        per week
-        """
-        pass
 
     def get_jobs_applied(self, **kwargs):
         """Queries database for jobs_applied table for entries associated with user
@@ -158,10 +150,10 @@ class User(BaseModel, Base):
         start, end = generate_week_range(date_applied)
         existing_weeks = models.database.get_associated('WeeklyStats',
                                                         'user_id', self.id)
-        found = False
-
+        
         # TODO: Make this portion more efficient by implementing
         # A binary search if objects are returned in chronological order
+        found = False
         for week in existing_weeks:
             if week.start_date == start:
                 found = True
@@ -172,6 +164,39 @@ class User(BaseModel, Base):
                               end_date=end, num_applications = 1)
         week.save()
     
+    # TODO consolidate repeated code in above and below functions
+    # for week in weeks loop can be moved into separate function with 
+    # binary search (or something) to improve efficiency
+    def get_jobs_applied_stats(self, date):
+        """Analyzes users history of jobs_applied up to (and including) date
+
+        Args:
+            date (datetime.datetime): End date of query search
+
+        Returns:
+            Average Jobs Applied Per Week (int), Jobs Applied This Week (int)
+        """
+        results = {}
+        weeks = models.database.get_associated('WeeklyStats', 'user_id', self.id)
+        start, end = generate_week_range(date)
+        print(start, end)
+        num_applications = [ week.num_applications for week in weeks ]
+        results['avg_applications'] = sum(num_applications) / len(num_applications)
+        
+        found = False
+        results['this_week'] = 0
+        for week in weeks:
+            if week.start_date.date() == start:
+                found = True
+                results['this_week'] += week.num_applications
+        return results
+
+    def get_jobs_interviewed_stats(self, date):
+        """Analyzes users history of jobs_interviewed up to (and including) date
+        
+        """
+        pass
+
     def get_user_rewards(self, **kwargs):
         """Queries database for user rewards table for entries associated with user
         Args:

@@ -10,7 +10,7 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import Grid from '@material-ui/core/Grid';
 import getUrl from './tools/getUrl';
-import { checkEmail } from './tools/userTools.js';
+import { checkEmail, getCookie } from './tools/userTools.js';
 
 const useStyles = makeStyles(theme => ({
 	root: {
@@ -61,7 +61,8 @@ export default function AccountPage(props) {
   };
 
   const submitEmail = () => {
-    const url = getUrl('/api/user/email/') + userData.id;
+    const user_id = getCookie('user_id');
+    const url = getUrl('/api/user/' + user_id + 'email');
     
     if (checkEmail(account.email)) {
       $.ajax({

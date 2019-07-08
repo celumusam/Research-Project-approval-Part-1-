@@ -14,6 +14,7 @@ client_secret = os.environ.get('GITHUB_CLIENT_SECRET')
 def homepage():
     if 'username' in session:
         resp = make_response(render_template('user.html'))
+        resp.set_cookie('user_id', session['id']) 
         return resp
 
     return redirect(url_for('index'))

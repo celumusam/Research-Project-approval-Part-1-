@@ -102,18 +102,18 @@ class Storage:
             return all_obj.get(obj_str)
         return None
     
-    def get_associated(self, table, foreign_key, foreign_id):
+    def get_associated(self, table, column, value):
         """Queries the table for values that match foreign id
         Args:
             table (str): table to query
-            foreign_key (str): name of foreign key in table to find
-            foreign_id (str): value of foreign key to find in table table.
+            column (str): name of column to search through
+            value (str): value of column to match.
 
         Returns: 
             List[Objects]: Each matched object from query
         """
         results = []
-        query_filter = "{}.{} == '{}'".format(table, foreign_key, foreign_id)
+        query_filter = "{}.{} == '{}'".format(table, column, value)
         for result in self.__session.query(eval(table)).\
             filter(eval(query_filter)):
             results.append(result)

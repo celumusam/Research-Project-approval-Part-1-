@@ -2,18 +2,18 @@
 """
 Flask route that returns json responses necessary for web application
 """
+import requests
+import pdb
+import json
+import uuid
 from application.server.api import api_views
 from application.models import database, CLASS_DICT
-import requests
-
 from application.models.user import User, UserReward
 from application.models.reward import Reward
 from application.models.jobs_applied import JobsApplied
+from datetime import date, datetime
 from flask import abort, jsonify, session, request
-import pdb
-import json
 from random import randint
-import uuid
 
 
 @api_views.route('/rewards', methods=['GET', 'POST'])
@@ -183,7 +183,23 @@ def jobs_interested():
     #TODO this function is not in use at the moment.
     pass
 
-@api_views.route('/user/email/<user_id>', methods=['GET', 'PUT'])
+@api_views.route('/user/<user_id>/appliedstats', methods=['GET'])
+def get_user_jobs_appliedstats(user_id):
+    """Used to retrieve jobs applied stats of user
+
+    Args:
+        user_id (str): unique id of user
+
+    Returns: 
+        Dictionary of the following results:
+            avg_applications (int): Average applications per week up to today
+            this_week (int): Applications this week
+    """
+    user = database.get('User', user_id)
+    results = user.get_jobs_applied_stats(date.today())
+    return jsonify(results), 200
+
+@api_views.route('/user/<user_id>/email', methods=['GET', 'PUT'])
 def user_email(user_id):
     """Used to retrieve, add and update user's email
     Assumptions:
@@ -199,9 +215,7 @@ def user_email(user_id):
     user = database.get('User', user_id)
     if request.method == 'PUT':
         body = request.get_json()
-        print(body)
         user.email = body.get('email')
-        print(user.__dict__)
         user.save()
 
     return jsonify(email=user.email), 200

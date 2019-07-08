@@ -9,6 +9,8 @@ import AddIcon from '@material-ui/icons/Add';
 import SummaryTable from './SummaryTable';
 import AddJob from './AddJob';
 import Expansion from './Expansion';
+import getUrl from '../tools/getUrl';
+import { getCookie } from '../tools/userTools.js';
 
 const styles = theme => ({
   root: {
@@ -34,6 +36,7 @@ class Home extends Component {
     super(props);
     this.state = {
       addJobScreen: false,
+      appliedStats: 0,
     };
     this.handleScreen = this.handleScreen.bind(this);
   }
@@ -45,17 +48,28 @@ class Home extends Component {
   }
 
   componentDidMount() {
-
+    const user_id = getCookie('user_id');
+    const path = '/api/user/' + user_id + '/appliedstats';
+    const url = getUrl(path);
+    $.ajax({
+      type: 'GET',
+      url, url,
+      success: (data) => {
+        this.setState({
+          appliedStats: data,
+        });
+      }
+    });
   }
 
   /* Todo : Add Zoom Up effect when the user clicks the Fab Button */
   render() {
     const { classes } = this.props;
-    const { addJobScreen } = this.state;
+    const { addJobScreen, appliedStats } = this.state;
   
     return (
       <div className={classes.root}>
-        <SummaryTable />
+        <SummaryTable appliedStats={appliedStats}/>
         <Expansion />
         <Fab
           color="secondary"
