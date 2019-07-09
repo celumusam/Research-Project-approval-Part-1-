@@ -165,6 +165,27 @@ class User(BaseModel, Base):
                               end_date=end, num_applications = 1)
         week.save()
     
+    def edit_job(self, **kwargs):
+        """Edits a job
+
+        Args:
+            Keyword arguments containing job descriptions
+        Returns:
+            None
+        """
+        filters = {'id': kwargs['id'], 'user_id': self.id}
+        results = models.database.get_with_and_filters('JobsApplied', **filters)
+        if results:
+            job = results[0]
+            for key, value in kwargs.items():
+                if key == 'date_applied':
+                    date_val = datetime.strptime(value, '%a, %d %b %Y %X %Z').date()
+                    setattr(job, key, date_val)
+                elif key != 'id':
+                    setattr(job, key, value)
+            job.save()
+        
+
     # TODO consolidate repeated code in above and below functions
     # for week in weeks loop can be moved into separate function with 
     # binary search (or something) to improve efficiency

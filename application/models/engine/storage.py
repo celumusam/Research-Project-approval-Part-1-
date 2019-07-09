@@ -4,7 +4,7 @@ Database engine
 """
 
 from os import getenv
-from sqlalchemy import create_engine, MetaData
+from sqlalchemy import create_engine, MetaData, and_
 from sqlalchemy.orm import sessionmaker, scoped_session
 from application.models.base_model import Base
 from application.models import base_model, user, level, reward
@@ -116,6 +116,25 @@ class Storage:
         query_filter = "{}.{} == '{}'".format(table, column, value)
         for result in self.__session.query(eval(table)).\
             filter(eval(query_filter)):
+            results.append(result)
+        return results
+    
+    def get_with_and_filters(self, table, **kwargs):
+        """Queries the table for values that match the given kwargs
+        Args:
+            table (str): table to query
+            kwargs: each key represents a column in table,
+                    each value represents a value to match in the column
+
+        Returns: 
+            List[Objects]: Each matched object from query
+        """
+        results = []
+        filters = []
+        for key, value in kwargs.items():
+            filters.append("{}.{} == '{}'".format(table, key, value))
+        for result in self.__session.query(eval(table)).\
+            filter(eval(filters[0]), eval(filters[1])):
             results.append(result)
         return results
 
