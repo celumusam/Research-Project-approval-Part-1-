@@ -172,6 +172,21 @@ def jobs_applied():
     status = 200 if 'success' in response.keys() else 404
     return jsonify(response), status
 
+@api_views.route('/user/<user_id>/jobs', methods=['GET', 'POST', 'PUT'])
+def get_user_jobs(user_id):
+    """Used to retrieve user's jobs.
+    
+    Args:
+        user_id (str): Unique id of the user
+    Return:
+        List of dictionaries (where each dictionary is a matched object
+    """
+    user = database.get('User', user_id)
+
+    if request.method == 'GET':
+        results = user.get_jobs_applied()
+        return jsonify(results), 200
+    
 
 @api_views.route('/jobs/interested', methods=['GET', 'POST', 'PUT', 'DELETE'])
 def jobs_interested():

@@ -192,7 +192,10 @@ class User(BaseModel, Base):
             if week.start_date.date() < first_start:
                 first_start = week.start_date.date()
         num_weeks = (end - first_start).days // 7
-        results['avg_applications'] = sum(num_applications) // num_weeks
+        if num_weeks != 0:
+            results['avg_applications'] = sum(num_applications) // num_weeks
+        else:
+            results['avg_applications'] = 0
         results['num_weeks'] = num_weeks
         return results
 

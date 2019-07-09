@@ -11,6 +11,7 @@ import Interviewing from './Interviewing';
 import OfferStage from './OfferStage';
 import Archive from './Archive';
 import AddJob from './AddJob';
+import JobListBody from './JobListBody';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -30,15 +31,27 @@ const useStyles = makeStyles(theme => ({
   }
 }));
 
-const panels = [
-  { key: 'Applied', component: <Applied />},
-  { key: 'Interviewing' , component: <Interviewing /> },
-  { key: 'Offer Stage', component: <OfferStage /> },
-  { key: 'Archive', component: <Archive /> },
-]
 
-export default function Expansion() {
+export default function Expansion(props) {
   const classes = useStyles();
+  const panels = [
+    {
+      key: 'Applied',
+      component: <JobListBody type={'applied'} jobs={props.applied}/>
+    },
+    {
+      key: 'Interviewing',
+      component: <JobListBody type={'interviewing'} jobs={props.interviewing}/>
+    },
+    {
+      key: 'Offer Stage',
+      component: <JobListBody type={'offer'} jobs={props.offerStage}/>
+    },
+    {
+      key: 'Archive',
+      component: <JobListBody type={'archive'} jobs={props.archived} />
+    },
+  ]
 
   return (
     <div className={classes.root}>
