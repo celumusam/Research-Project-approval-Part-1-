@@ -130,11 +130,8 @@ class Storage:
             List[Objects]: Each matched object from query
         """
         results = []
-        filters = []
-        for key, value in kwargs.items():
-            filters.append("{}.{} == '{}'".format(table, key, value))
         for result in self.__session.query(eval(table)).\
-            filter(eval(filters[0]), eval(filters[1])):
+            filter_by(**kwargs):
             results.append(result)
         return results
 
