@@ -28,7 +28,11 @@ const useStyles = makeStyles(theme => ({
   },
   icon: {
     color: 'white',
-  }
+  },
+  expansionPadding: {
+    paddingLeft: '8px',
+    paddingRight: '8px',
+  },
 }));
 
 
@@ -83,7 +87,7 @@ export default function Expansion(props) {
               {panel.key}
             </Typography>
           </ExpansionPanelSummary>
-          <ExpansionPanelDetails>
+          <ExpansionPanelDetails className={classes.expansionPadding}>
             {panel.component}
           </ExpansionPanelDetails>
         </ExpansionPanel>

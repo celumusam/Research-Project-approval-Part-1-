@@ -10,7 +10,7 @@ from datetime import datetime, date, timedelta
 from sqlalchemy.orm import relationship, backref
 from sqlalchemy import (
     Column, Integer, String, Float, ForeignKey,
-    MetaData, Table, JSON, DateTime)
+    MetaData, Table, JSON, Date)
 import json
 
 
@@ -30,8 +30,8 @@ class WeeklyStats(BaseModel, Base):
     __tablename__ = 'weekly_stats'
     user_id = Column(String(60), ForeignKey('users.id'))
     users = relationship('User', back_populates='weekly_stats')
-    start_date = Column(DateTime())
-    end_date = Column(DateTime())
+    start_date = Column(Date())
+    end_date = Column(Date())
     num_applications = Column(Integer, default=0)
     num_interviews = Column(Integer, default=0)
 

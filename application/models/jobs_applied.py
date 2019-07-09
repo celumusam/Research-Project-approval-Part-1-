@@ -9,7 +9,7 @@ import application.models
 from sqlalchemy.orm import relationship, backref
 from sqlalchemy import (
     Column, Integer, String, Float, ForeignKey,
-    MetaData, Table, JSON, DateTime)
+    MetaData, Table, JSON, Date)
 import json
 
 
@@ -34,7 +34,7 @@ class JobsApplied(BaseModel, Base):
     user_id = Column(String(60), ForeignKey('users.id'))
     company = Column(String(128), nullable=False)
     job_title = Column(String(128), nullable=False)
-    date_applied = Column(DateTime())
+    date_applied = Column(Date())
     status = Column(String(32), nullable=True)
     url = Column(String(2048), nullable=True)
     location = Column(String(128), nullable=True)

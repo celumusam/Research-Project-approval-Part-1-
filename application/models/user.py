@@ -8,7 +8,7 @@ from application.models.base_model import BaseModel, Base
 from application import models
 from application.models.jobs_applied import JobsApplied
 from application.models.weekly_stats import WeeklyStats, generate_week_range
-from datetime import datetime
+from datetime import datetime, date
 from sqlalchemy.orm import relationship, backref
 from sqlalchemy import Column, Integer, String, Float, ForeignKey,\
     MetaData, Table, JSON
@@ -168,29 +168,29 @@ class User(BaseModel, Base):
     # TODO consolidate repeated code in above and below functions
     # for week in weeks loop can be moved into separate function with 
     # binary search (or something) to improve efficiency
-    def get_jobs_applied_stats(self, date):
+    def get_jobs_applied_stats(self, today):
         """Analyzes users history of jobs_applied up to (and including) date
 
         Args:
-            date (datetime.datetime): End date of query search
+            today (datetime.datetime): End date of query search
 
         Returns:
             Average Jobs Applied Per Week (int), Jobs Applied This Week (int)
         """
         results = {}
         weeks = models.database.get_associated('WeeklyStats', 'user_id', self.id)
-        start, end = generate_week_range(date)
+        start, end = generate_week_range(today)
         num_applications = [ week.num_applications for week in weeks ]
         
         found = False
         results['this_week'] = 0
         first_start = start
         for week in weeks:
-            if week.start_date.date() == start:
+            if week.start_date == start:
                 found = True
                 results['this_week'] += week.num_applications
-            if week.start_date.date() < first_start:
-                first_start = week.start_date.date()
+            if week.start_date < first_start:
+                first_start = week.start_date
         num_weeks = (end - first_start).days // 7
         if num_weeks != 0:
             results['avg_applications'] = sum(num_applications) // num_weeks
