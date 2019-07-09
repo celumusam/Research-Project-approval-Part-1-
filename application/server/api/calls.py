@@ -2,18 +2,18 @@
 """
 Flask route that returns json responses necessary for web application
 """
+import requests
+import pdb
+import json
+import uuid
 from application.server.api import api_views
 from application.models import database, CLASS_DICT
-import requests
-
 from application.models.user import User, UserReward
 from application.models.reward import Reward
 from application.models.jobs_applied import JobsApplied
+from datetime import date, datetime
 from flask import abort, jsonify, session, request
-import pdb
-import json
 from random import randint
-import uuid
 
 
 @api_views.route('/rewards', methods=['GET', 'POST'])
@@ -108,6 +108,81 @@ def job_search():
     return jsonify({'items': r.json()})
 
 
+@api_views.route('/user/<user_id>/jobs', methods=['GET', 'POST', 'PUT'])
+def get_user_jobs(user_id):
+    """Used to retrieve user's jobs.
+    
+    Args:
+        user_id (str): Unique id of the user
+    Return:
+        List of dictionaries (where each dictionary is a matched object
+    """
+    user = database.get('User', user_id)
+
+    if request.method == 'GET':
+        results = user.get_jobs_applied()
+        return jsonify(results), 200
+    
+    if request.is_json is False:
+        return jsonify(error="Not a valid JSON"), 400
+    
+    data = request.get_json()
+    
+    if request.method == 'POST':
+        user.create_jobs_applied(**data)
+    
+    if request.method == 'PUT':
+        user.edit_job(**data)
+    
+    return jsonify(success="yay"), 200
+
+@api_views.route('/user/<user_id>/appliedstats', methods=['GET'])
+def get_user_jobs_appliedstats(user_id):
+    """Used to retrieve jobs applied stats of user
+
+    Args:
+        user_id (str): unique id of user
+
+    Returns: 
+        Dictionary of the following results:
+            avg_applications (int): Average applications per week up to today
+            this_week (int): Applications this week
+    """
+    user = database.get('User', user_id)
+    results = user.get_jobs_applied_stats(date.today())
+    return jsonify(results), 200
+
+@api_views.route('/user/<user_id>/email', methods=['GET', 'PUT'])
+def user_email(user_id):
+    """Used to retrieve, add and update user's email
+    Assumptions:
+        All checks to verify if email is valid will be performed on frontend side
+        User id should exist in database
+    Args:
+        Params: user_id should be specified in url
+        Response Body:
+            Put Request - Should contain new email address
+    Returns:
+        Email address of the user.
+    """
+    user = database.get('User', user_id)
+    if request.method == 'PUT':
+        body = request.get_json()
+        user.email = body.get('email')
+        user.save()
+
+    return jsonify(email=user.email), 200
+    
+@api_views.route('/jobs/interested', methods=['GET', 'POST', 'PUT', 'DELETE'])
+def jobs_interested():
+    """
+    Used to retrieve, add, update, and delete jobs that the user is interested in
+    :return:
+    A user's jobs_interested for valid GET request, error, or status code for valid non GET requests
+    """
+    #TODO this function is not in use at the moment.
+    pass
+
 @api_views.route('/jobs/applied', methods=['GET', 'POST', 'PUT', 'DELETE'])
 def jobs_applied():
     """
@@ -125,7 +200,6 @@ def jobs_applied():
     if request.is_json is False:
         return jsonify(error="Not a valid JSON"), 400
 
-#    jobs = json.loads(user.jobs_applied)
     data = request.get_json()
     if request.method != 'POST':
         job_id = data.get('id')
@@ -151,7 +225,8 @@ def jobs_applied():
 
         # POST: Creates a new entry
         elif request.method == 'POST':
-            user.jobs_applied.append(JobsApplied(**data))
+            # TODO create a method within user class to add jobs
+            user.create_jobs_applied(**data)
             token = 30
             user.currency += token
 
@@ -171,37 +246,3 @@ def jobs_applied():
 
     status = 200 if 'success' in response.keys() else 404
     return jsonify(response), status
-
-
-@api_views.route('/jobs/interested', methods=['GET', 'POST', 'PUT', 'DELETE'])
-def jobs_interested():
-    """
-    Used to retrieve, add, update, and delete jobs that the user is interested in
-    :return:
-    A user's jobs_interested for valid GET request, error, or status code for valid non GET requests
-    """
-    #TODO this function is not in use at the moment.
-    pass
-
-@api_views.route('/user/email/<user_id>', methods=['GET', 'PUT'])
-def user_email(user_id):
-    """Used to retrieve, add and update user's email
-    Assumptions:
-        All checks to verify if email is valid will be performed on frontend side
-        User id should exist in database
-    Args:
-        Params: user_id should be specified in url
-        Response Body:
-            Put Request - Should contain new email address
-    Returns:
-        Email address of the user.
-    """
-    user = database.get('User', user_id)
-    if request.method == 'PUT':
-        body = request.get_json()
-        print(body)
-        user.email = body.get('email')
-        print(user.__dict__)
-        user.save()
-
-    return jsonify(email=user.email), 200

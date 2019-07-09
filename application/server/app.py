@@ -1,5 +1,6 @@
 """This module creates the application for Job Odyssey"""
-from flask import Blueprint, Flask, render_template, redirect, request, url_for, jsonify, session
+from flask import (Blueprint, Flask, render_template, redirect, 
+                   request, url_for, jsonify, session, make_response)
 from flask_cors import CORS, cross_origin
 import os
 import requests
@@ -42,7 +43,9 @@ def teardown_db(exception):
 @app.route('/', methods=('GET', 'POST'))
 def index():
     if session.get('username'):
-        return redirect(url_for('user.homepage'))
+        response = make_response(redirect(url_for('user.homepage')))
+        response.set_cookie('user_id', session['id'])
+        return response
     return render_template('index.html')
 
 @app.route('/login')

@@ -4,6 +4,7 @@ import Typography from '@material-ui/core/Typography';
 import withStyles from '@material-ui/core/styles/withStyles';
 import TableCard from './TableCard';
 import getUrl from './tools/getUrl';
+import { getCookie } from './tools/userTools.js';
 
 const styles = theme => ({
   body: {
@@ -32,15 +33,12 @@ class TableHistory extends Component {
   }
   
   componentDidMount() {
-    let url = getUrl('/api/jobs/applied');
+    const user_id = getCookie('user_id');
+    const url = getUrl('/api/user/' + user_id + '/jobs');
     $.ajax({
       type: 'GET',
       url: url,
       success: results => {
-        /*let list = []
-        Object.keys(results).forEach(key => {
-          list.push({ ...results[key], id: key });
-        });*/
         this.setState({
           applied: results,
         });
@@ -49,27 +47,25 @@ class TableHistory extends Component {
   }
   
   modifyValues(type, section, data) {
-    let url;
-    if (section === 'Applied') {
-      url = getUrl('/api/jobs/applied');
-      $.ajax({
-        type: type,
-        url: url,
-        dataType: 'json',
-        contentType: 'application/json',
-        data: JSON.stringify(data),
-        success: data => {
-          let list = []
-          let results = data['updated_jobs']
-          Object.keys(results).forEach(key => {
-            list.push({ ...results[key], id: key });
-          });
-          this.setState({
-            applied: list,
-          });
-        },
-      });
-    }
+    const user_id = getCookie('user_id');
+    const url = getUrl('/api/user/' + user_id + '/jobs');
+    $.ajax({
+      type: type,
+      url: url,
+      dataType: 'json',
+      contentType: 'application/json',
+      data: JSON.stringify(data),
+      success: data => {
+        let list = []
+        let results = data['updated_jobs']
+        Object.keys(results).forEach(key => {
+          list.push({ ...results[key], id: key });
+        });
+        this.setState({
+          applied: list,
+        });
+      },
+    });
   }
 
   render() {

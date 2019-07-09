@@ -4,11 +4,12 @@ Database engine
 """
 
 from os import getenv
-from sqlalchemy import create_engine, MetaData
+from sqlalchemy import create_engine, MetaData, and_
 from sqlalchemy.orm import sessionmaker, scoped_session
 from application.models.base_model import Base
 from application.models import base_model, user, level, reward
 from application.models.jobs_applied import JobsApplied
+from application.models.weekly_stats import WeeklyStats
 from application.models.user import UserReward
 
 class Storage:
@@ -100,20 +101,37 @@ class Storage:
             all_obj = self.all(cls)
             return all_obj.get(obj_str)
         return None
-
-    def get_associated(self, primary_cls, foreign_key, foreign_id):
-        """Queries the database for cls that are associated with the foreign key.
+    
+    def get_associated(self, table, column, value):
+        """Queries the table for values that match foreign id
         Args:
-            primary_cls: string with name of table to query
-            foreign_key: string of the foreign_key name
-            foreign_id: id (string) of the foreign key to find in the primary table.
-        Return: List of dictionaries containing matches. Each dictionary represents
-        a matched object in the database.
+            table (str): table to query
+            column (str): name of column to search through
+            value (str): value of column to match.
+
+        Returns: 
+            List[Objects]: Each matched object from query
         """
         results = []
-        query_filter = "{}.{} == '{}'".format(primary_cls, foreign_key, foreign_id)
-        for result in self.__session.query(eval(primary_cls)).\
+        query_filter = "{}.{} == '{}'".format(table, column, value)
+        for result in self.__session.query(eval(table)).\
             filter(eval(query_filter)):
+            results.append(result)
+        return results
+    
+    def get_with_and_filters(self, table, **kwargs):
+        """Queries the table for values that match the given kwargs
+        Args:
+            table (str): table to query
+            kwargs: each key represents a column in table,
+                    each value represents a value to match in the column
+
+        Returns: 
+            List[Objects]: Each matched object from query
+        """
+        results = []
+        for result in self.__session.query(eval(table)).\
+            filter_by(**kwargs):
             results.append(result)
         return results
 

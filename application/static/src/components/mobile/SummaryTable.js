@@ -6,6 +6,7 @@ import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
+import getUrl from '../tools/getUrl';
 
 const StyledTableCell = withStyles(theme => ({
   root: {
@@ -42,13 +43,22 @@ function createData(name, applied, interviews) {
 	return { name, applied, interviews };
 }
 
-const rows = [
-	createData('This Week', 10, 4),
-	createData('Weekly Average', 10, 2),
-]
-
-export default function SummaryTable() {
+export default function SummaryTable(props) {
   const classes = useStyles();
+  const { appliedStats } = props;
+  let rows;
+
+  if (appliedStats != null) {
+      rows = [
+        createData('This Week', appliedStats.this_week, 0),
+        createData('Weekly Average', appliedStats.avg_applications, 0),
+      ]
+  } else {
+    rows = [
+      createData('This Week', 0, 0),
+      createData('Weekly Average', 0, 0),
+    ]
+  }
 
   return (
     <Paper> 

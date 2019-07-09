@@ -144,9 +144,8 @@ class User extends Component {
     $.ajax({
       type: 'GET',
       url: url,
-      //async: false,
       success: (data) => {
-        console.log(data);
+        console.log('data from first api call', data);
         this.setState({
           id: data.id,
           username: data.user_name,
@@ -156,23 +155,11 @@ class User extends Component {
           rewards: data.rewards,
           email: data.email,
         });
-        $.ajax({
-          type: 'GET',
-          url: 'https://api.github.com/users/' + this.state.username,
-          //async: false,
-          success: (data) => {
-            this.setState({
-              profilePicture: data.avatar_url,
-              bio: data.bio
-            });
-          }
-        });
       }
     });
   }
 
   render() {
-    console.log('in User render');
     const { open, Transition, token, message, noEmail } = this.state;
     const { classes } = this.props;
     const isMobileDevice = isMobile();
@@ -263,7 +250,7 @@ class User extends Component {
               <Switch>
               <Route 
                 exact path='/user'
-                render={(props) => <Home {...props} userData={ this.state } />}
+                render={(props) => <Home {...props} />}
               />
               <Route
                 exact path='/user/account'
