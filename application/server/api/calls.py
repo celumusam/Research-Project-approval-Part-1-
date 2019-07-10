@@ -111,7 +111,7 @@ def job_search():
 @api_views.route('/user/<user_id>/jobs', methods=['GET', 'POST', 'PUT'])
 def get_user_jobs(user_id):
     """Used to retrieve user's jobs.
-    
+
     Args:
         user_id (str): Unique id of the user
     Return:
@@ -122,18 +122,18 @@ def get_user_jobs(user_id):
     if request.method == 'GET':
         results = user.get_jobs_applied()
         return jsonify(results), 200
-    
+
     if request.is_json is False:
         return jsonify(error="Not a valid JSON"), 400
-    
+
     data = request.get_json()
-    
+
     if request.method == 'POST':
         user.create_jobs_applied(**data)
-    
+
     if request.method == 'PUT':
         user.edit_job(**data)
-    
+
     return jsonify(success="yay"), 200
 
 @api_views.route('/user/<user_id>/appliedstats', methods=['GET'])
@@ -143,7 +143,7 @@ def get_user_jobs_appliedstats(user_id):
     Args:
         user_id (str): unique id of user
 
-    Returns: 
+    Returns:
         Dictionary of the following results:
             avg_applications (int): Average applications per week up to today
             this_week (int): Applications this week
@@ -172,7 +172,7 @@ def user_email(user_id):
         user.save()
 
     return jsonify(email=user.email), 200
-    
+
 @api_views.route('/jobs/interested', methods=['GET', 'POST', 'PUT', 'DELETE'])
 def jobs_interested():
     """
@@ -180,8 +180,44 @@ def jobs_interested():
     :return:
     A user's jobs_interested for valid GET request, error, or status code for valid non GET requests
     """
-    #TODO this function is not in use at the moment.
-    pass
+    user = database.get('User', session['id'])
+    # GET: Return all jobs that user is interested in
+    if request.method == 'GET':
+        return jsonify(user.jobs_interested), 200
+
+    if request.is_json is False:
+        return jsonify(error="Not a valid JSON"), 400
+
+    jobs = json.loads(user.jobs_interested)
+    data = request.get_json()
+    job_id = data.get('id')
+    if ((request.method == 'DELETE' or request.method == 'PUT') and
+        (job_id not in jobs)):
+        response = {'error': 'Not a valid job ID'}
+    else:
+        # PUT: Change an existing entry
+        if request.method == 'PUT':
+            for key, value in data.items():
+                if key != 'id':
+                    jobs[job_id][key] = value
+            user.currency += 10
+        # POST: Creates a new entry
+        elif request.method == 'POST':
+            if job_id not in jobs:
+                data.pop('id')
+                jobs[job_id] = data
+                user.currency += 10
+
+        # DELETE: Deletes an entry
+        elif request.method == 'DELETE':
+            jobs.pop(job_id)
+
+        user.jobs_interested = json.dumps(jobs)
+        user.save()
+        response = {'success': True}
+
+    status = 200 if 'success' in response else 404
+    return jsonify(response), status
 
 @api_views.route('/jobs/applied', methods=['GET', 'POST', 'PUT', 'DELETE'])
 def jobs_applied():
