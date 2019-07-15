@@ -57,7 +57,7 @@ export default function AddJob(props) {
     company: '',
     jobTitle: '',
     dateApplied: date,
-    offerStatus: '',
+    offerStatus: 'Applied',
     url: '',
     address: '',
     interviewProgress: '',
@@ -77,7 +77,6 @@ export default function AddJob(props) {
   const handleSubmit = () => {
     if (values.company.trim() === '' || values.jobTitle.trim() === ''
         || values.address.trim() === '') {
-      console.log("didn't fill out mandatory fields");
       /* Todo : Add a warning here */
     } else {
       let url = getUrl('/api/jobs/applied')
@@ -101,7 +100,7 @@ export default function AddJob(props) {
             company: '',
             jobTitle: '',
             dateApplied: date,
-            offerStatus: '',
+            offerStatus: 'Applied',
             url: '',
             address: '',
             interviewProgress: '',
