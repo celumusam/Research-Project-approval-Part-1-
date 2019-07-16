@@ -117,7 +117,11 @@ class User(BaseModel, Base):
             List of dictionary results
         """
         jobs = []
-        query_results = models.database.get_associated('JobsApplied', 'user_id', self.id)
+        if kwargs and 'start_date' in kwargs.keys() and 'end_date' in kwargs.keys():
+            kwargs['user_id'] = self.id
+            query_results = models.database.get_with_and_filters('JobsApplied', **kwargs)
+        else:
+            query_results = models.database.get_associated('JobsApplied', 'user_id', self.id)
         for job in query_results:
             jobs.append({'id': job.id,
                          'company': job.company,

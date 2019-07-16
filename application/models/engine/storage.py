@@ -130,9 +130,19 @@ class Storage:
             List[Objects]: Each matched object from query
         """
         results = []
-        for result in self.__session.query(eval(table)).\
-            filter_by(**kwargs):
-            results.append(result)
+        if kwargs and 'start_date' in kwargs.keys() and 'end_date' in kwargs.keys():
+            start_date = kwargs['start_date']
+            end_date = kwargs['end_date']
+            kwargs.pop('start_date')
+            kwargs.pop('end_date')
+            for result in self.__session.query(eval(table)).\
+                filter(eval(table).date_applied.between(start_date, end_date)).\
+                filter_by(**kwargs):
+                results.append(result)
+        else:
+            for result in self.__session.query(eval(table)).\
+                filter_by(**kwargs):
+                results.append(result)
         return results
 
     def count(self, cls=None):

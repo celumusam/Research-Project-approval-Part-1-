@@ -8,8 +8,8 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.base import MIMEBase
 from email.mime.text import MIMEText
 from email import encoders
-from application.models import database
-from datetime import date
+from application.models import database, weekly_stats
+import datetime
 import json
 import os
 from os import getenv
@@ -33,7 +33,10 @@ def make_message(user, main_workbook):
     # Create sheets for student's workbook and main_workbook (staff)
     worksheet = workbook.add_worksheet()
     main_worksheet = main_workbook.add_worksheet(name)
-    applied_jobs = user.get_jobs_applied()
+
+    date_range = weekly_stats.generate_week_range(datetime.date.today())
+    dates = {'start_date': date_range[0], 'end_date': date_range[1]}
+    applied_jobs = user.get_jobs_applied(**dates)
     # applied_jobs = database.userAppliedJobs(user.id)
     message = ['{} Weekly Report\n'.format(user.name)]
     message.append('Number Applied this Week: {}\n\n'.format(2))
@@ -41,13 +44,13 @@ def make_message(user, main_workbook):
     main_worksheet.write('A1', 'STUDENT FIRST and LAST NAME')
     main_worksheet.write('A2', user.name)
     main_worksheet.write('B1', 'DATE')
-    main_worksheet.write('B2', str(date))
+    main_worksheet.write('B2', str(datetime.date.today()))
     main_worksheet.write('C1', 'COHORT')
 
     worksheet.write('A1', 'STUDENT FIRST and LAST NAME')
     main_worksheet.write('A2', user.name)
     worksheet.write('B1', 'DATE')
-    main_worksheet.write('B2', str(date))
+    main_worksheet.write('B2', str(datetime.date.today()))
     worksheet.write('C1', 'COHORT')
 
     main_worksheet.write('A4', 'Date of Application')
@@ -85,7 +88,7 @@ def make_message(user, main_workbook):
 
         main_worksheet.write('A' + row, job['date_applied'])
         main_worksheet.write('B' + row, job['company'])
-        main_worksheet.write('C' + row, job['usl'])
+        main_worksheet.write('C' + row, job['url'])
         main_worksheet.write('D' + row, job['job_title'])
         main_worksheet.write('E' + row, job['location'])
         main_worksheet.write('F' + row, job['notes'])
