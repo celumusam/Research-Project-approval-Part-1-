@@ -155,6 +155,6 @@ If you would like to contact [Susan](https://suhearsawho.github.io/) or [Chris](
 
 
 ## Acknowledgements
-* Holberton School (Staff and Students)
+* [Holberton School](https://www.holbertonschool.com/) (Staff and Students)
 * Cats
 * Cafes
