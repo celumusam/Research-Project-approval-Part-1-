@@ -36,13 +36,10 @@ def make_message(user, main_workbook):
 
     date_range = weekly_stats.generate_week_range(datetime.date.today())
     dates = {'start_date': date_range[0], 'end_date': date_range[1]}
-    print(datetime.date.today())
-    print(str(datetime.date.today()))
-    print(dates)
     applied_jobs = user.get_jobs_applied(**dates)
     # applied_jobs = database.userAppliedJobs(user.id)
     message = ['{} Weekly Report\n'.format(user.name)]
-    message.append('Number Applied this Week: {}\n\n'.format(2))
+    message.append('Number Applied this Week: {}\n\n'.format(len(applied_jobs)))
 
     main_worksheet.write('A1', 'STUDENT FIRST and LAST NAME')
     main_worksheet.write('A2', user.name)
