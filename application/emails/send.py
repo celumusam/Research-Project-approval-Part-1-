@@ -36,6 +36,9 @@ def make_message(user, main_workbook):
 
     date_range = weekly_stats.generate_week_range(datetime.date.today())
     dates = {'start_date': date_range[0], 'end_date': date_range[1]}
+    print(datetime.date.today())
+    print(str(datetime.date.today()))
+    print(dates)
     applied_jobs = user.get_jobs_applied(**dates)
     # applied_jobs = database.userAppliedJobs(user.id)
     message = ['{} Weekly Report\n'.format(user.name)]
@@ -77,7 +80,7 @@ def make_message(user, main_workbook):
         message.append(''.join([date, company, title, '\n']))
         # Add to Worksheet
         row = str(index + 5)
-        worksheet.write('A' + row, job['date_applied'])
+        worksheet.write('A' + row, str(job['date_applied']))
         worksheet.write('B' + row, job['company'])
         worksheet.write('C' + row, job['url'])
         worksheet.write('D' + row, job['job_title'])
@@ -99,7 +102,7 @@ def make_message(user, main_workbook):
 
     return {
         'name' : user.name,
-        'email' : 'jobodysseynotifications@gmail.com', #change later
+        'email' : user.email, #change later
         'message' : ''.join(message),
         'excel': name + '.xlsx'
     }
@@ -141,12 +144,15 @@ def main():
 
     users = user_list(main_workbook)
     for user in users:
-    # send_email(user['email'], email_address, email_pwd, user['message'], user['excel'])
+        send_email(user['email'], email_address, email_pwd, user['message'], user['excel'])
         total_report.append(user['message'])
 
     main_workbook.close()
-    send_email('susan.su.mech@gmail.com', email_address,
+    send_email('sf-students-hr@holbertonschool.com', email_address,
                email_pwd, '\n\n'.join(total_report), main_workbook_name)
+    # FOR TESTING PURPOSES
+    #send_email('jobodysseynotifications@gmail.com', email_address,
+    #           email_pwd, '\n\n'.join(total_report), main_workbook_name)
 
 
 if __name__ == '__main__':

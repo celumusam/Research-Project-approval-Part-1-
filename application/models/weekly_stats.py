@@ -47,8 +47,10 @@ def generate_week_range(input_date):
         tuple of datetime objects: Corresponds to start of week and end of week
     """
     weekday = int(input_date.strftime('%d'))
+    print(weekday)
 
-    start_week = input_date + timedelta(days=-(weekday - 1))
+    #start_week = input_date + timedelta(days=-(weekday - 1))
+    start_week = input_date - timedelta(days=7)
     end_week = start_week + timedelta(days=6)
 
     return start_week, end_week
