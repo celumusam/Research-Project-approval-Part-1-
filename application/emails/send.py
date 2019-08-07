@@ -99,7 +99,7 @@ def make_message(user, main_workbook):
 
     return {
         'name' : user.name,
-        'email' : user.email if user.email else 'jobodysseynotifications@gmail.com', #change later
+        'email' : user.email if user.email else 'jobodysseynotifications@gmail.com',
         'message' : ''.join(message),
         'excel': name + '.xlsx'
     }
@@ -123,9 +123,6 @@ def send_email(user_email, email_address, email_pwd, email_body, email_excel):
 
     with smtplib.SMTP_SSL(host='smtp.gmail.com', port=465) as s:
         s.login(email_address, email_pwd)
-        print(email_address)
-        print(email_pwd)
-        print(msg)
         s.send_message(msg)
 
     del msg
@@ -144,7 +141,10 @@ def main():
 
     users = user_list(main_workbook)
     for user in users:
-        send_email(user['email'], email_address, email_pwd, user['message'], user['excel'])
+        try:
+            send_email(user['email'], email_address, email_pwd, user['message'], user['excel'])
+        except e:
+            pass
         total_report.append(user['message'])
 
     main_workbook.close()
