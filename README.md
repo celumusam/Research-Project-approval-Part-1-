@@ -1,10 +1,10 @@
 # Job Odyssey Holberton
 
-<a href="https://jobodyssey.com">
+<a href="https://jobodyssey.hbtn.io">
     <img src="https://i.imgur.com/Z9dBwqq.png" alt="jobodyssey" title="JobOdyssey">
 </a>
 
-[Job Odyssey](https://jobodyssey.com) is a web application that is designed to gamify and organize your job search! Job Odyssey is specifically designed for
+[Job Odyssey](https://jobodyssey.hbtn.io) is a web application that is designed to gamify and organize your job search! Job Odyssey is specifically designed for
 software engineers, with features to fit the software engineer job application process.
 To achieve this goal, Job Odyssey provides a unique reward and currency system that is designed to re-energize your job 
 search. Users can generate currency by performing certain actions - such as saving a job post, applying to jobs, and 
@@ -38,6 +38,8 @@ So brainstorming led to the insight that with the huge amount of jobs a software
 Job Odyssey attempts to address that by organizing applications and adding visible progression along the journey. We want to be there for support from the humble beginnings, the ups and downs, to hopefully, the ultimate success.
 
 That is why we are called Job Odyssey!
+
+As an update to Job Odyssey, Holberton requested it be used to track students who were looking for jobs. This meant creating more features that helped to keep the data organized and searchable. This was done through some frontend changes and by creating a script and changes that allowed for weekly emails that reported on a user's work.
 
 A Kanban board on Trello was utilized throughout in order to keep tasks and communication organized.
 The React front end and the way routing was designed, allowed Job Odyssey to have more dynamic features without handcuffing the rest of the project.
@@ -194,12 +196,12 @@ If you have any suggestions or would like to contribute to Job Odyssey, please c
 
 ## Authors
 ### **Christopher Choe**
-[christopherchoe](https://github.com/christopherchoe)
+[christopherchoe](https://christopherchoe.github.io)
 
 Chris is a backend software engineer, working on the system design, database, and REST API for the most part with some fingerprints in the frontend in order to better understand and integrate the backend into the whole picture.
 
 ### **Susan Su**
-[suhearsawho](https://github.com/suhearsawho)
+[suhearsawho](https://suhearsawho.github.io)
     
 Susan is a full stack software engineer who enjoys both backend work and frontend work, taking charge of the design and React portions of Job Odyssey while still being heavily involved in the backend database and API work as well. 
     
