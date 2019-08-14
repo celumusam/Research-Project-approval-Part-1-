@@ -37,9 +37,16 @@ def make_message(user, main_workbook):
     date_range = weekly_stats.generate_week_range(datetime.date.today())
     dates = {'start_date': date_range[0], 'end_date': date_range[1]}
     applied_jobs = user.get_jobs_applied(**dates)
+    applied_stats = user.get_jobs_applied_stats(datetime.date.today())
+    three_week_total = applied_stats['three_week_total']
     # applied_jobs = database.userAppliedJobs(user.id)
     message = ['{} Weekly Report\n'.format(user.name)]
     message.append('Number Applied this Week: {}\n\n'.format(len(applied_jobs)))
+    # TODO: Change these to be dynamic
+    message.append('All Time Total: {}\n'.format(applied_stats['total_applications']))
+    message.append('Avg Over {} Week(s): {}\n\n'.format(applied_stats['num_weeks'], applied_stats['avg_applications']))
+    message.append('Total in Last 3 Weeks: {}\n'.format(three_week_total))
+    message.append('Avg Over Last 3 Weeks: {:.2f}\n\n'.format(three_week_total / 3))
 
     main_worksheet.write('A1', 'STUDENT FIRST and LAST NAME')
     main_worksheet.write('A2', user.name)
@@ -100,6 +107,8 @@ def make_message(user, main_workbook):
     return {
         'name' : user.name,
         'email' : user.email if user.email else 'jobodysseynotifications@gmail.com',
+        # FOR TESTING PURPOSES
+        #'email': 'jobodyssey19@gmail.com',
         'message' : ''.join(message),
         'excel': name + '.xlsx'
     }

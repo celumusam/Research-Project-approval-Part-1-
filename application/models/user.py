@@ -8,7 +8,7 @@ from application.models.base_model import BaseModel, Base
 from application import models
 from application.models.jobs_applied import JobsApplied
 from application.models.weekly_stats import WeeklyStats, generate_week_range
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
 from sqlalchemy.orm import relationship, backref
 from sqlalchemy import Column, Integer, String, Float, ForeignKey,\
     MetaData, Table, JSON
@@ -205,22 +205,30 @@ class User(BaseModel, Base):
         results = {}
         weeks = models.database.get_associated('WeeklyStats', 'user_id', self.id)
         start, end = generate_week_range(today)
-        num_applications = [ week.num_applications for week in weeks ]
+        num_applications = len(weeks) # weeks ended up all unique so each app is individually counted
         
         found = False
         results['this_week'] = 0
         first_start = start
+        three_weeks = today - timedelta(days=21)
+        applications_last_three = []
+        num_apps_last_three = 0
         for week in weeks:
             if week.start_date == start:
                 found = True
                 results['this_week'] += week.num_applications
             if week.start_date < first_start:
                 first_start = week.start_date
+            if week.start_date >= three_weeks:
+                num_apps_last_three += 1
+                applications_last_three.append(week)
         num_weeks = (end - first_start).days // 7
         if num_weeks != 0:
-            results['avg_applications'] = sum(num_applications) // num_weeks
+            results['avg_applications'] = num_applications // num_weeks
         else:
             results['avg_applications'] = 0
+        results['three_week_total'] = num_apps_last_three
+        results['total_applications'] = num_applications
         results['num_weeks'] = num_weeks
         return results
 
