@@ -1,10 +1,10 @@
 # Job Odyssey Holberton
 
-<a href="https://jobodyssey.com">
+<a href="https://jobodyssey.hbtn.io">
     <img src="https://i.imgur.com/Z9dBwqq.png" alt="jobodyssey" title="JobOdyssey">
 </a>
 
-[Job Odyssey](https://jobodyssey.com) is a web application that is designed to gamify and organize your job search! Job Odyssey is specifically designed for
+[Job Odyssey](https://jobodyssey.hbtn.io) is a web application that is designed to gamify and organize your job search! Job Odyssey is specifically designed for
 software engineers, with features to fit the software engineer job application process.
 To achieve this goal, Job Odyssey provides a unique reward and currency system that is designed to re-energize your job 
 search. Users can generate currency by performing certain actions - such as saving a job post, applying to jobs, and 
@@ -22,6 +22,7 @@ updating the status of previously applied jobs.
     - [Applied Jobs](#applied-jobs)
     - [Rewards](#rewards)
 - [Built With](#built-with)
+- [API](#api)
 - [Future](#future)
 - [Authors](#authors)
     - [Christopher Choe](#christopher-choe)
@@ -37,6 +38,8 @@ So brainstorming led to the insight that with the huge amount of jobs a software
 Job Odyssey attempts to address that by organizing applications and adding visible progression along the journey. We want to be there for support from the humble beginnings, the ups and downs, to hopefully, the ultimate success.
 
 That is why we are called Job Odyssey!
+
+As an update to Job Odyssey, Holberton requested it be used to track students who were looking for jobs. This meant creating more features that helped to keep the data organized and searchable. This was done through some frontend changes and by creating a script and changes that allowed for weekly emails that reported on a user's work.
 
 A Kanban board on Trello was utilized throughout in order to keep tasks and communication organized.
 The React front end and the way routing was designed, allowed Job Odyssey to have more dynamic features without handcuffing the rest of the project.
@@ -132,6 +135,57 @@ This rewards feature is a slot machine like spinner which will choose from a con
 * [React](https://reactjs.org) - Javascript Library
 * [Material UI](https://material-ui.com) - Pre-Built React components
 
+## API
+
+The API can be found in application/server/api/calls.py and to use any call, use jobodyssey.hbtn.io/api/...
+
+/api/rewards
+
+GET: Returns a randomized array of ten rewards based on rarity for a user to win based on a roll
+POST: Takes a user id and reward id and adds that to the user rewards table
+
+/api/user
+
+GET: Returns the user's information based on session id
+
+/api/user/currency
+
+GET: Returns the user's currency based on session id
+
+/api/user/rewards
+
+GET: Returns all rewards associated with a user
+
+/api/job_search
+
+POST: Returns job's matching the parameters through Github Jobs API
+
+/api/user/<user_id>/jobs
+
+GET: gets all jobs asscoiated with a user
+POST: create a new user job
+PUT: modify an existing user job
+
+/api/user/<user_id>/appliedstats
+
+GET: Returns the statistics associated with a user's applied jobs
+
+/api/user/<user_id>/email
+
+GET: Returns a user email
+POST: Adds a user email
+
+/api/jobs/interested
+
+GET: Returns all the jobs marked as interested from job searches
+POST: Modify information related to an interested job
+PUT: Create a new interested job from a job search call
+DELETE: Delete an existing interested job
+
+/api/jobs/applied
+
+Depreciated jobs applied call using old schema, working on phasing out
+
 ## Future
 
 There are plenty of features that we would love to implement into Job Odyssey.
@@ -142,12 +196,12 @@ If you have any suggestions or would like to contribute to Job Odyssey, please c
 
 ## Authors
 ### **Christopher Choe**
-[christopherchoe](https://github.com/christopherchoe)
+[christopherchoe](https://christopherchoe.github.io)
 
-Chris is a backend software engineer, working on the database and REST API for the most part with some fingerprints in the frontend in order to better understand and integrate the backend into the whole picture.
+Chris is a backend software engineer, working on the system design, database, and REST API for the most part with some fingerprints in the frontend in order to better understand and integrate the backend into the whole picture.
 
 ### **Susan Su**
-[suhearsawho](https://github.com/suhearsawho)
+[suhearsawho](https://suhearsawho.github.io)
     
 Susan is a full stack software engineer who enjoys both backend work and frontend work, taking charge of the design and React portions of Job Odyssey while still being heavily involved in the backend database and API work as well. 
     
