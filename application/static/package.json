@@ -1,57 +1,37 @@
 {
   "name": "job_odyssey",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "webpack-dev-server",
-    "build": "webpack -p --progress --config webpack.config.js"
-  },
-  "babel": {
-    "presets": [
-      "@babel/preset-env",
-      "@babel/preset-react"
-    ],
-    "plugins": [
-      [
-        "@babel/plugin-transform-runtime",
-        {
-          "absoluteRuntime": false,
-          "corejs": false,
-          "helpers": true,
-          "regenerator": true,
-          "useESModules": false
-        }
-      ]
-    ]
-  },
-  "author": "",
   "license": "ISC",
   "dependencies": {
-    "@material-ui/core": "^4.0.0-rc.0",
-    "@material-ui/icons": "^4.0.1",
-    "babel-polyfill": "^6.23.0",
-    "material-table": "^1.39.2",
-    "react": "^16.8.6",
-    "react-dom": "^16.8.6",
+    "@material-ui/core": "^4.3.2",
+    "@material-ui/icons": "^4.2.1",
+    "material-table": "^1.50.0",
+    "react": "^16.9.0",
+    "react-dom": "^16.9.0",
     "react-icons": "^3.7.0",
     "react-router-dom": "^5.0.1",
     "react-swipeable-views": "^0.13.3"
   },
   "devDependencies": {
-    "@babel/core": "^7.4.5",
-    "@babel/plugin-transform-runtime": "^7.0.0",
-    "@babel/preset-env": "^7.4.5",
+    "@babel/core": "^7.0.0-0",
+    "@babel/plugin-transform-runtime": "^7.5.5",
+    "@babel/preset-env": "^7.5.5",
     "@babel/preset-react": "^7.0.0",
-    "babel-loader": "^8.0.6",
-    "babel-polyfill": "^6.23.0",
-    "css-loader": "^2.1.1",
-    "eslint": "^5.16.0",
-    "eslint-plugin-react-hooks": "^1.6.0",
-    "html-webpack-plugin": "^3.2.0",
-    "style-loader": "^0.23.1",
-    "webpack": "^4.32.2",
-    "webpack-cli": "^3.3.2",
-    "webpack-dev-server": "^3.5.1"
+    "eslint": "^6.2.1",
+    "eslint-config-prettier": "^6.1.0",
+    "eslint-config-react": "^1.1.7",
+    "eslint-plugin-prettier": "^3.1.0",
+    "eslint-plugin-react": "^7.14.3",
+    "eslint-plugin-react-hooks": "^1.7.0",
+    "parcel-bundler": "^1.12.3",
+    "prettier": "^1.18.2",
+    "prop-types": "^15.7.2"
+  },
+  "scripts": {
+    "build": "parcel build ./src/pages/index/index.html ./src/pages/error/index.html ./src/pages/user/index.html",
+    "lint": "eslint ./src/**/*.{js,jsx}",
+    "start:index": "parcel ./src/apps/index/index.html",
+    "start:error": "parcel ./src/apps/error/index.html",
+    "start:user": "parcel ./src/apps/user/index.html"
   }
 }
