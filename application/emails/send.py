@@ -21,9 +21,10 @@ def user_list(main_workbook):
     Return: List of dictionaries
     """
     users = database.all('User')
-    email_users = []
+    email_users = {'Not Enough Weeks': [], 'Warning': [], 'Good': [], 'Recommendation': []}
     for user in users.values():
-        email_users.append(make_message(user, main_workbook))
+        message = make_message(user, main_workbook)
+        email_users[message['standing']].append(message)
     return email_users
 
 def make_message(user, main_workbook):
@@ -42,11 +43,27 @@ def make_message(user, main_workbook):
     # applied_jobs = database.userAppliedJobs(user.id)
     message = ['{} Weekly Report\n'.format(user.name)]
     message.append('Number Applied this Week: {}\n\n'.format(len(applied_jobs)))
-    # TODO: Change these to be dynamic
+    # TODO: TEMP FIX FOR SHOJI STATS
+    if user.name == 'Shoji Takashima':
+        applied_stats['total_applications'] += 21
+        three_week_total += 21
+
     message.append('All Time Total: {}\n'.format(applied_stats['total_applications']))
     message.append('Avg Over {} Week(s): {}\n\n'.format(applied_stats['num_weeks'], applied_stats['avg_applications']))
     message.append('Total in Last 3 Weeks: {}\n'.format(three_week_total))
-    message.append('Avg Over Last 3 Weeks: {:.2f}\n\n'.format(three_week_total / 3))
+
+    # standing to represent a student's standing for career sprint
+    three_week_avg = three_week_total / 3
+    if applied_stats['num_weeks'] < 3:
+        standing = 'Not Enough Weeks'
+    elif three_week_avg >= 15:
+        standing = 'Recommendation'
+    elif three_week_avg >= 5:
+        standing = 'Good'
+    else:
+        standing = 'Warning'
+
+    message.append('Avg Over Last 3 Weeks: {:.2f}\n\n'.format(three_week_avg))
 
     main_worksheet.write('A1', 'STUDENT FIRST and LAST NAME')
     main_worksheet.write('A2', user.name)
@@ -106,9 +123,10 @@ def make_message(user, main_workbook):
 
     return {
         'name' : user.name,
-        'email' : user.email if user.email else 'jobodysseynotifications@gmail.com',
+        'standing' : standing,
+        #'email' : user.email if user.email else 'jobodysseynotifications@gmail.com',
         # FOR TESTING PURPOSES
-        #'email': 'jobodyssey19@gmail.com',
+        'email': 'jobodyssey19@gmail.com',
         'message' : ''.join(message),
         'excel': name + '.xlsx'
     }
@@ -137,6 +155,15 @@ def send_email(user_email, email_address, email_pwd, email_body, email_excel):
     del msg
     os.remove(email_excel)
 
+def email_standing(users, standing, total_report, email_address, email_pwd):
+    total_report.append('Students with {} Standing\n\n'.format(standing))
+    for user in users:
+        try:
+            send_email(user['email'], email_address, email_pwd, user['message'], user['excel'])
+        except e:
+            pass
+        total_report.append(user['message'])
+
 def main():
     email_address = getenv('JO_EMAIL')
     email_pwd = getenv('JO_EMAIL_PWD')
@@ -149,19 +176,15 @@ def main():
     total_report = []
 
     users = user_list(main_workbook)
-    for user in users:
-        try:
-            send_email(user['email'], email_address, email_pwd, user['message'], user['excel'])
-        except e:
-            pass
-        total_report.append(user['message'])
+    for standing in users.keys():
+        email_standing(users[standing], standing, total_report, email_address, email_pwd)
 
     main_workbook.close()
-    send_email('sf-students-hr@holbertonschool.com', email_address,
-               email_pwd, '\n\n'.join(total_report), main_workbook_name)
-    # FOR TESTING PURPOSES
-    #send_email('jobodysseynotifications@gmail.com', email_address,
+    #send_email('sf-students-hr@holbertonschool.com', email_address,
     #           email_pwd, '\n\n'.join(total_report), main_workbook_name)
+    # FOR TESTING PURPOSES
+    send_email('jobodysseynotifications@gmail.com', email_address,
+               email_pwd, '\n\n'.join(total_report), main_workbook_name)
 
 
 if __name__ == '__main__':

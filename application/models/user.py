@@ -3,6 +3,7 @@
 User Class from Models Module
 """
 import hashlib
+import math
 import os
 from application.models.base_model import BaseModel, Base
 from application import models
@@ -222,7 +223,7 @@ class User(BaseModel, Base):
             if week.start_date >= three_weeks:
                 num_apps_last_three += 1
                 applications_last_three.append(week)
-        num_weeks = (end - first_start).days // 7
+        num_weeks = math.ceil((today - first_start).days / 7)
         if num_weeks != 0:
             results['avg_applications'] = num_applications // num_weeks
         else:
