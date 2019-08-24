@@ -45,8 +45,8 @@ def make_message(user, main_workbook):
     message.append('Number Applied this Week: {}\n\n'.format(len(applied_jobs)))
     # TODO: TEMP FIX FOR SHOJI STATS
     if user.name == 'Shoji Takashima':
-        applied_stats['total_applications'] += 21
-        three_week_total += 21
+        applied_stats['total_applications'] = 27
+        three_week_total = 27
 
     message.append('All Time Total: {}\n'.format(applied_stats['total_applications']))
     message.append('Avg Over {} Week(s): {}\n\n'.format(applied_stats['num_weeks'], applied_stats['avg_applications']))
@@ -63,7 +63,8 @@ def make_message(user, main_workbook):
     else:
         standing = 'Warning'
 
-    message.append('Avg Over Last 3 Weeks: {:.2f}\n\n'.format(three_week_avg))
+    message.append('Avg Over Last 3 Weeks: {:.2f}\n'.format(three_week_avg))
+    message.append('Standing: {}\n\n'.format(standing))
 
     main_worksheet.write('A1', 'STUDENT FIRST and LAST NAME')
     main_worksheet.write('A2', user.name)
@@ -156,7 +157,9 @@ def send_email(user_email, email_address, email_pwd, email_body, email_excel):
     os.remove(email_excel)
 
 def email_standing(users, standing, total_report, email_address, email_pwd):
-    total_report.append('Students with {} Standing\n\n'.format(standing))
+    total_report.append('--------------------------------------------------\n')
+    total_report.append('Students with {} Standing\n'.format(standing))
+    total_report.append('--------------------------------------------------\n')
     for user in users:
         try:
             send_email(user['email'], email_address, email_pwd, user['message'], user['excel'])
