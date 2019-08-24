@@ -124,9 +124,9 @@ def make_message(user, main_workbook):
     return {
         'name' : user.name,
         'standing' : standing,
-        #'email' : user.email if user.email else 'jobodysseynotifications@gmail.com',
+        'email' : user.email if user.email else 'jobodysseynotifications@gmail.com',
         # FOR TESTING PURPOSES
-        'email': 'jobodyssey19@gmail.com',
+        #'email': 'jobodyssey19@gmail.com',
         'message' : ''.join(message),
         'excel': name + '.xlsx'
     }
@@ -180,11 +180,11 @@ def main():
         email_standing(users[standing], standing, total_report, email_address, email_pwd)
 
     main_workbook.close()
-    #send_email('sf-students-hr@holbertonschool.com', email_address,
-    #           email_pwd, '\n\n'.join(total_report), main_workbook_name)
-    # FOR TESTING PURPOSES
-    send_email('jobodysseynotifications@gmail.com', email_address,
+    send_email('sf-students-hr@holbertonschool.com', email_address,
                email_pwd, '\n\n'.join(total_report), main_workbook_name)
+    # FOR TESTING PURPOSES
+    #send_email('jobodysseynotifications@gmail.com', email_address,
+    #           email_pwd, '\n\n'.join(total_report), main_workbook_name)
 
 
 if __name__ == '__main__':
