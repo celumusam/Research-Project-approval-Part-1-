@@ -39,14 +39,11 @@ def make_message(user, main_workbook):
     dates = {'start_date': date_range[0], 'end_date': date_range[1]}
     applied_jobs = user.get_jobs_applied(**dates)
     applied_stats = user.get_jobs_applied_stats(datetime.date.today())
+    applied_jobs = applied_jobs['applied'] + applied_jobs['screening'] + applied_jobs['offerStage'] + applied_jobs['archived']
     three_week_total = applied_stats['three_week_total']
     # applied_jobs = database.userAppliedJobs(user.id)
     message = ['{} Weekly Report\n'.format(user.name)]
     message.append('Number Applied this Week: {}\n\n'.format(len(applied_jobs)))
-    # TODO: TEMP FIX FOR SHOJI STATS
-    if user.name == 'Shoji Takashima':
-        applied_stats['total_applications'] = 27
-        three_week_total = 27
 
     message.append('All Time Total: {}\n'.format(applied_stats['total_applications']))
     message.append('Avg Over {} Week(s): {}\n\n'.format(applied_stats['num_weeks'], applied_stats['avg_applications']))
