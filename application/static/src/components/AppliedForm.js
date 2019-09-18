@@ -91,14 +91,13 @@ export default function AppliedForm(props) {
   const classes = useStyles();
   const [values, setValues] = React.useState({
     company: '',
-    dateApplied: date,
     jobTitle: '',
-    interview: [],
-    offerStatus: '',
-    notes: '',
-    jobPostURL: '',
+    dateApplied: date,
+    offerStatus: 'Applied',
+    url: '',
     address: '',
-    languages: [],
+    interviewProgress: '',
+    notes: '',
     open: false,
     Transition: Grow,
   });
@@ -130,7 +129,7 @@ export default function AppliedForm(props) {
             company: '',
             jobTitle: '',
             dateApplied: date,
-            offerStatus: '',
+            offerStatus: 'Applied',
             url: '',
             address: '',
             interviewProgress: '',
