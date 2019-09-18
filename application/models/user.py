@@ -117,14 +117,22 @@ class User(BaseModel, Base):
         Returns:
             List of dictionary results
         """
-        jobs = []
+        jobs = {'applied': [], 'archived': [], 'offerStage': [], 'screening': []}
         if kwargs and 'start_date' in kwargs.keys() and 'end_date' in kwargs.keys():
             kwargs['user_id'] = self.id
             query_results = models.database.get_with_and_filters('JobsApplied', **kwargs)
         else:
             query_results = models.database.get_associated('JobsApplied', 'user_id', self.id)
         for job in query_results:
-            jobs.append({'id': job.id,
+            if job.status == 'Interviewing':
+                category = 'screening'
+            elif job.status == 'Offer Stage':
+                category = 'offerStage'
+            elif job.status == 'Archived':
+                category = 'archived'
+            else:
+                category = 'applied'
+            jobs[category].append({'id': job.id,
                          'company': job.company,
                          'job_title': job.job_title,
                          'date_applied': job.date_applied,
@@ -169,7 +177,7 @@ class User(BaseModel, Base):
             week = WeeklyStats(user_id=self.id, start_date=start,
                               end_date=end, num_applications = 1)
         week.save()
-    
+
     def edit_job(self, **kwargs):
         """Edits a job
 
@@ -189,7 +197,20 @@ class User(BaseModel, Base):
                 elif key != 'id':
                     setattr(job, key, value)
             job.save()
-        
+
+    def delete_job(self, **kwargs):
+        """Deletes a job
+
+        Args:
+            Keyword arguments containing job id
+        Returns:
+            None
+        """
+        filters = {'id': kwargs['id'], 'user_id': self.id}
+        results = models.database.get_with_and_filters('JobsApplied', **filters)
+        if results:
+            job = results[0]
+            job.delete()
 
     # TODO consolidate repeated code in above and below functions
     # for week in weeks loop can be moved into separate function with 

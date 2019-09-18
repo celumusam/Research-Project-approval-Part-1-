@@ -108,7 +108,7 @@ def job_search():
     return jsonify({'items': r.json()})
 
 
-@api_views.route('/user/<user_id>/jobs', methods=['GET', 'POST', 'PUT'])
+@api_views.route('/user/<user_id>/jobs', methods=['GET', 'POST', 'PUT', 'DELETE'])
 def get_user_jobs(user_id):
     """Used to retrieve user's jobs.
 
@@ -133,6 +133,9 @@ def get_user_jobs(user_id):
 
     if request.method == 'PUT':
         user.edit_job(**data)
+
+    if request.method == 'DELETE':
+        user.delete_job(**data)
 
     return jsonify(success="yay"), 200
 

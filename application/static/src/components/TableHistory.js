@@ -40,7 +40,10 @@ class TableHistory extends Component {
       url: url,
       success: results => {
         this.setState({
-          applied: results,
+          applied: results['applied'],
+	  interviewing: results['screening'],
+	  offerStage: results['offerStage'],
+	  archived: results['archived'],
         });
       }
     });
@@ -59,7 +62,7 @@ class TableHistory extends Component {
         let list = []
         let results = data['updated_jobs']
         Object.keys(results).forEach(key => {
-          list.push({ ...results[key], id: key });
+	  list.push({ ...results[key], id: key });
         });
         this.setState({
           applied: list,
@@ -74,6 +77,9 @@ class TableHistory extends Component {
     return (
         <div className={ classes.body }>
           <TableCard section="Applied" values={ applied } modifyValues={ this.modifyValues } />
+          <TableCard section="Screening" values={ interviewing } modifyValues={ this.modifyValues } />
+          <TableCard section="Offer Stage" values={ offerStage } modifyValues={ this.modifyValues } />
+          <TableCard section="Rejected" values={ archived } modifyValues={ this.modifyValues } />
         </div>
     )
   }
